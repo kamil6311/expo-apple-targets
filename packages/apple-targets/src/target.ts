@@ -19,30 +19,32 @@ export type ExtensionType =
   | "credentials-provider"
   | "account-auth"
   | "action"
-  | "safari";
+  | "safari"
+  | "appintent";
 
 export const KNOWN_EXTENSION_POINT_IDENTIFIERS: Record<string, ExtensionType> =
-  {
-    "com.apple.message-payload-provider": "imessage",
-    "com.apple.widgetkit-extension": "widget",
-    "com.apple.usernotifications.content-extension": "notification-content",
-    "com.apple.share-services": "share",
-    "com.apple.usernotifications.service": "notification-service",
-    "com.apple.spotlight.import": "spotlight",
-    "com.apple.intents-service": "intent",
-    "com.apple.intents-ui-service": "intent-ui",
-    "com.apple.Safari.web-extension": "safari",
-    "com.apple.background-asset-downloader-extension": "bg-download",
-    "com.apple.matter.support.extension.device-setup": "matter",
-    "com.apple.quicklook.thumbnail": "quicklook-thumbnail",
-    "com.apple.location.push.service": "location-push",
-    "com.apple.authentication-services-credential-provider-ui":
-      "credentials-provider",
-    "com.apple.authentication-services-account-authentication-modification-ui":
-      "account-auth",
-    "com.apple.services": "action",
-    // "com.apple.intents-service": "intents",
-  };
+{
+  "com.apple.message-payload-provider": "imessage",
+  "com.apple.widgetkit-extension": "widget",
+  "com.apple.usernotifications.content-extension": "notification-content",
+  "com.apple.share-services": "share",
+  "com.apple.usernotifications.service": "notification-service",
+  "com.apple.spotlight.import": "spotlight",
+  "com.apple.intents-service": "intent",
+  "com.apple.intents-ui-service": "intent-ui",
+  "com.apple.Safari.web-extension": "safari",
+  "com.apple.background-asset-downloader-extension": "bg-download",
+  "com.apple.matter.support.extension.device-setup": "matter",
+  "com.apple.quicklook.thumbnail": "quicklook-thumbnail",
+  "com.apple.location.push.service": "location-push",
+  "com.apple.authentication-services-credential-provider-ui":
+    "credentials-provider",
+  "com.apple.authentication-services-account-authentication-modification-ui":
+    "account-auth",
+  "com.apple.services": "action",
+  "com.apple.appintents-extension": "appintent",
+  // "com.apple.intents-service": "intents",
+};
 
 // TODO: Maybe we can replace `NSExtensionPrincipalClass` with the `@main` annotation that newer extensions use?
 export function getTargetInfoPlistForType(type: ExtensionType) {
@@ -241,6 +243,13 @@ export function getTargetInfoPlistForType(type: ExtensionType) {
       },
     });
   }
+  else if (type === "appintent") {
+    return plist.build({
+      EXAppExtensionAttributes: {
+        EXExtensionPointIdentifier: NSExtensionPointIdentifier,
+      },
+    });
+  }
 
   // Default: used for widget and bg-download
   return plist.build({
@@ -256,6 +265,8 @@ export function productTypeForType(type: ExtensionType) {
       return "com.apple.product-type.application.on-demand-install-capable";
     case "watch":
       return "com.apple.product-type.application";
+    case "appintent":
+      return "com.apple.product-type.extensionkit-extension";
     default:
       return "com.apple.product-type.app-extension";
   }
@@ -291,6 +302,8 @@ export function getFrameworksForType(type: ExtensionType) {
     return ["QuickLookThumbnailing"];
   } else if (type === "notification-content") {
     return ["UserNotifications", "UserNotificationsUI"];
+  } else if (type === "appintent") {
+    return ["AppIntents"];
   } else if (type === "action") {
     return [
       // "UniformTypeIdentifiers"
@@ -316,7 +329,7 @@ export function isNativeTargetOfType(
   if (
     type === "clip" &&
     target.props.productType ===
-      "com.apple.product-type.application.on-demand-install-capable"
+    "com.apple.product-type.application.on-demand-install-capable"
   ) {
     return true;
   }
@@ -330,14 +343,14 @@ export function isNativeTargetOfType(
   if (!infoPlist.NSExtension?.NSExtensionPointIdentifier) {
     console.error(
       "No NSExtensionPointIdentifier found in extension Info.plist for target: " +
-        target.getDisplayName()
+      target.getDisplayName()
     );
     return false;
   }
 
   return (
     KNOWN_EXTENSION_POINT_IDENTIFIERS[
-      infoPlist.NSExtension?.NSExtensionPointIdentifier
+    infoPlist.NSExtension?.NSExtensionPointIdentifier
     ] === type
   );
 }
