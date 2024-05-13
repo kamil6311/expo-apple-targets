@@ -1,29 +1,44 @@
 {
-  "name": "@bacons/apple-targets-repo",
-  "version": "1.0.0",
-  "private": true,
+  "name": "@acme/target-plugin",
+  "version": "0.1.0",
+  "description": "Target plugin",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "scripts": {
-    "postinstall": "expo-yarn-workspaces check-workspace-dependencies",
-    "start": "lerna run build --parallel -- --watch",
-    "prepare": "lerna run prepare --parallel"
+    "build": "expo-module build",
+    "clean": "expo-module clean",
+    "lint": "expo-module lint",
+    "test": "expo-module test",
+    "prepare": "expo-module prepare",
+    "prepublishOnly": "expo-module prepublishOnly",
+    "expo-module": "expo-module",
+    "open:ios": "open -a \"Xcode\" example/ios",
+    "open:android": "open -a \"Android Studio\" example/android",
+    "plugin:build": "tsc -p ./tsconfig.json"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
+  "keywords": [
+    "react-native",
+    "expo"
   ],
-  "resolutions": {
-    "expo": "^49.0.8",
-    "fs-extra": "^9.1.0"
-  },
+  "author": "lukestahl (https://github.com/lukesthl)",
+  "license": "MIT",
   "devDependencies": {
-    "eslint": "^8.10.0",
-    "expo-yarn-workspaces": "^2.0.2",
-    "lerna": "3.4.1",
-    "prettier": "^2.2.1",
-    "ts-node": "^10.0.0",
-    "typescript": "^4.2.4",
-    "expo-module-scripts": "^2.0.0",
-    "@types/jest": "^26",
-    "jest": "^26.6.3"
+    "@bacons/xcode": "^1.0.0-alpha.12",
+    "@react-native/normalize-color": "^2.1.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/glob": "^8.1.0",
+    "@types/react": "^18.2.55",
+    "expo-module-scripts": "^3.4.1",
+    "expo-modules-core": "^1.11.8",
+    "fs-extra": "^11.2.0",
+    "glob": "^10.3.10"
+  },
+  "peerDependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  },
+  "dependencies": {
+    "expo-file-system": "~16.0.6"
   }
 }
