@@ -9,7 +9,7 @@ function safeSet(obj: any, key: string, value: any) {
     }
     obj = obj[segment];
   });
-  obj[last as any] = value;
+  obj[last as any] ||= value;
 
   return obj;
 }
@@ -50,7 +50,7 @@ export const withEASTargets: ConfigPlugin<{
   if (existing > -1) {
     (config.extra as any).eas.build.experimental.ios.appExtensions[existing] = {
       ...(config.extra as any).eas.build.experimental.ios.appExtensions[
-        existing
+      existing
       ],
       bundleIdentifier,
     };
