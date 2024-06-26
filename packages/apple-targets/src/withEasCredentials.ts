@@ -14,7 +14,7 @@ function safeSet(obj: any, key: string, value: any) {
     }
     obj = obj[segment];
   });
-  obj[last!] = value;
+  obj[last!] ||= value;
 
   return obj;
 }
@@ -124,8 +124,7 @@ export function getEASCredentialsForXcodeProject(
 
     if (!targetName) {
       throw new Error(
-        `Target ${target.getDisplayName()} (${
-          target.uuid
+        `Target ${target.getDisplayName()} (${target.uuid
         }) does not have a productName.`
       );
     }
